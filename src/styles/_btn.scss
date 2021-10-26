@@ -1,0 +1,14 @@
+.btn {
+  border: 0;
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+  &.secondary {
+    color: var(--var-primary-light);
+    background-color: var(--var-primary-color);
+  }
+  &.secondary {
+    color: var(--var-dark-color);
+    background-color: var(--var-light-gray);
+  }
+}

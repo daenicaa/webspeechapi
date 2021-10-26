@@ -1,0 +1,12 @@
+.menu {
+  display: flex;
+  justify-content: flex-end;
+  a {
+    margin: 2px 4px;
+    text-decoration: none;
+    color: var(--var-primary-dark);
+    &.active {
+      color: var(--var-primary-color);
+    }
+  }
+}
