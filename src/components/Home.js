@@ -3,16 +3,16 @@ import { NavLink } from "react-router-dom";
 import { MdMic, MdArrowRightAlt, MdPlayArrow, MdRefresh, MdOutlineUploadFile, MdOutlinePause } from 'react-icons/md';
 
 function Home() {
-
   const [selectedLang, setSelectedLang] = useState('');
   const [userName, setUserName] = useState('');
 	const [firstPage, setfirstPage] = useState(true);
   const [alertMessage, setAlertMessage] = useState('');
   const [speechResult, setSpeechResult] = useState(true);
-  const [message, setMessage] = useState('');
+  //const [transcriptMessage, setTranscriptMessage] = useState('');
   const [consent, setConsent] = useState(null);
   const [translationResult, setTranslationResult] = useState(null);
   const [action, setAction] = useState('');
+  let transcriptMess = ''
 
   const trans = [
     {
@@ -64,10 +64,12 @@ function Home() {
   				consentMessageRecognition.onresult = function(event) {
             setAlertMessage('Analizing...')
             let confidence = event.results[0][0].confidence;
-            if(confidence >= .8){
+
+            if(confidence >= .7){
               //for onend
               result = true
-              setMessage(event.results[0][0].transcript)
+
+              transcriptMess = event.results[0][0].transcript
 
               if(['non', 'no'].includes(event.results[0][0].transcript)){
                 setSpeechResult(false);
@@ -91,7 +93,7 @@ function Home() {
                 setAlertMessage('Please try again.')
                 setAction('retry')
               } else {
-                setConsent({ name: userName, consent: speechResult, lang: selectedLang,  message: message})
+                setConsent({ name: userName, consent: speechResult, lang: selectedLang,  message: transcriptMess})
               }
             }, 1000);
   				}
@@ -99,6 +101,7 @@ function Home() {
   		}, 1000);
     }
   }
+
   function handleUserName(event) {
     setUserName(event.target.value)
   }

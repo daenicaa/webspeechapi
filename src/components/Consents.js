@@ -6,15 +6,21 @@ function Consents() {
 		let cons = localStorage.getItem('consents');
 
 		let consents = typeof(cons) == 'string' ? JSON.parse(cons) : []
+		console.log('hello', consents.length)
+
 		function handlePlay(event, message) {
 			//pause icon
-			event.target.closest('.consent-item').classList.add('speaking')
+			if(event.target.closest('.consent-item')){
+				event.target.closest('.consent-item').classList.add('speaking')
+			}
 
 	    let consentMessageUtter = new SpeechSynthesisUtterance(message);
 	    speechSynthesis.speak(consentMessageUtter);
 			//play icon
 			setTimeout(() => {
-				event.target.closest('.consent-item').classList.remove('speaking')
+				if(event.target.closest('.consent-item')){
+					event.target.closest('.consent-item').classList.remove('speaking')
+				}
 			}, 1000)
 	  }
 
