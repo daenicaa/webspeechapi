@@ -38,7 +38,10 @@ function Home() {
       	setfirstPage(false);
         const agreement = `${consentMessage.text[0]}${consentMessage.text[1]}`
   			let consentMessageUtter = new SpeechSynthesisUtterance(agreement);
-  			speechSynthesis.speak(consentMessageUtter);
+        consentMessageUtter.rate = .9
+        setTimeout(function(){
+  			  speechSynthesis.speak(consentMessageUtter);
+        }, 1000);
 
   			consentMessageUtter.onend = function(event) {
   				let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
