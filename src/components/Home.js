@@ -8,7 +8,7 @@ function Home() {
   const [userName, setUserName] = useState('');
 	const [firstPage, setfirstPage] = useState(true);
   const [alertMessage, setAlertMessage] = useState('');
-  const [speechResult, setSpeechResult] = useState(false);
+  const [speechResult, setSpeechResult] = useState(true);
   const [message, setMessage] = useState('');
   const [consent, setConsent] = useState(null);
   const [translationResult, setTranslationResult] = useState(null);
@@ -72,7 +72,7 @@ function Home() {
               if(['non', 'no'].includes(event.results[0][0].transcript)){
                 setSpeechResult(false);
               }else {
-                setSpeechResult(state => true);
+                setSpeechResult(true);
               }
             }else {
               setAlertMessage('Please try again.')
@@ -104,13 +104,17 @@ function Home() {
   }
   function handlePlay(event, consent) {
     //pause icon
-    event.target.closest('.respond-container').classList.add('speaking')
+    if(event.target.closest('.respond-container')){
+      event.target.closest('.respond-container').classList.add('speaking')
+    }
 
     let consentMessageUtter = new SpeechSynthesisUtterance(consent.message);
     speechSynthesis.speak(consentMessageUtter);
     //play icon
     setTimeout(() => {
-      event.target.closest('.respond-container').classList.remove('speaking')
+      if(event.target.closest('.respond-container')){
+        event.target.closest('.respond-container').classList.remove('speaking')
+      }
     }, 1000)
   }
   function handleSaveConsent(event) {
