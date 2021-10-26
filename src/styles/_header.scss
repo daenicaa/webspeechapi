@@ -1,6 +1,9 @@
 .menu {
   display: flex;
   justify-content: flex-end;
+  max-width: 600px;
+  width: 100%;
+  margin-top: 2rem;
   a {
     margin: 2px 4px;
     text-decoration: none;

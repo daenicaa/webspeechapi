@@ -8,10 +8,14 @@ function Main(props){
   return (
     <Switch>
       <Route path="/consents">
-        <Consents />
+        <div className="container">
+          <Consents />
+        </div>
       </Route>
       <Route path="/">
-        <Home />
+        <div className="container">
+          <Home />
+        </div>
       </Route>
     </Switch>
   );

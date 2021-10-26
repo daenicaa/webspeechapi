@@ -2,15 +2,40 @@
   color: var(--var-primary-dark);
   width: 5rem;
   height: 5rem;
-  margin: 1rem auto;
   background-color: var(--var-light-gray);
   border-radius: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-
   .icon {
+    width: 2rem;
+    height: 2rem;
+  }
+  &.small {
     width: 3rem;
     height: 3rem;
+    .icon {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
   }
+  &.listening {
+    .icon{
+      animation: listening .25s infinite alternate;
+  	  transform-origin: center;
+    }
+  }
+  &.speaking {
+    animation: speaking .25s infinite alternate;
+	  transform-origin: center;
+  }
+}
+
+@keyframes listening {
+	to { transform: scale(1.4); }
+}
+
+@keyframes speaking {
+  from {background-color: var(--var-primary-color); color: var(--var-primary-light)}
+  to {background-color: var(--var-primary-color); color: var(--var-primary-light)}
 }

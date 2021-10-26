@@ -1,5 +1,13 @@
 .card {
-  max-width: 600px;
+  max-width: 400px;
   width: 100%;
   margin: 0 auto;
+  padding: 3rem;
+  background-color: var(--var-primary-light);
+  border-radius: 4px;
+  box-shadow: 0 0 8px -3px rgba(0, 0, 0, .2);
+  h2 {
+    font-size: 2rem;
+    margin: 0 0 3rem;
+  }
 }

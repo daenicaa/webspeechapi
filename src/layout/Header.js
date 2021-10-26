@@ -9,7 +9,7 @@ function Header(){
 
 	return (
 		<header>
-	    <div className="menu">
+	    <div className="container menu">
 			{menus.map((menu, index) => (
 				<NavLink
 					exact={true} activeClassName='active'

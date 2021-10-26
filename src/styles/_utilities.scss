@@ -1,0 +1,33 @@
+body {
+  font-size: 14px;
+  background-color: var(--var-light-gray-100)
+}
+
+.ml-auto {
+  margin-left: auto;
+}
+.mr-auto {
+  margin-right: auto;
+}
+
+.d-block {
+  display: block;
+}
+.d-flex {
+  display: flex;
+}
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.m-0 {
+  margin: 0!important;
+}
+.alert {
+  margin: 1rem 0;
+}
+p {
+  color: #555;
+  text-align: left;
+}

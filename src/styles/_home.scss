@@ -1,0 +1,32 @@
+.respond-container {
+  margin: 3rem 0;
+  display: flex;
+  align-items: center;
+  .icon-box {
+    align-items: center;
+    margin-right: 12px;
+    cursor: pointer;
+  }
+  .icon-box {
+    cursor: pointer;
+  }
+  .icon-box .speaking {
+    display: none;
+  }
+  &.speaking {
+    .icon-box .speaking {
+      display: block;
+    }
+    .icon-box .play {
+      display: none;
+    }
+  }
+}
+.d-flex {
+  &.btn-group{
+    justify-content: flex-end;
+  }
+  .btn {
+    display: flex;
+  }
+}
