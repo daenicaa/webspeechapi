@@ -43,61 +43,60 @@ function Home() {
       setAlertMessage('Please input required fields.')
     } else {
       setAlertMessage('')
-  		setTimeout(function(){
-  			const consentMessage = trans.find((tran) => tran.lang === selectedLang)
-        setTranslationResult(consentMessage.text)
 
-        setTab('speech')
+			const consentMessage = trans.find((tran) => tran.lang === selectedLang)
+      setTranslationResult(consentMessage.text)
 
-        const agreement = `${consentMessage.text[0]}${consentMessage.text[1]}`
-  			let consentMessageUtter = new SpeechSynthesisUtterance(agreement)
-        consentMessageUtter.rate = .9
-        speechSynthesis.speak(consentMessageUtter)
+      setTab('speech')
 
-  			consentMessageUtter.onend = function(event) {
-  				const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
-  				const consentMessageRecognition = new SpeechRecognition()
-          const grammar = selectedLang === 'en' ? '#JSGF V1.0  grammar answers  public <answer> = yes | no  ' : '#JSGF V1.0  grammar answers  public <answer> = oui | non  '
+      const agreement = `${consentMessage.text[0]}${consentMessage.text[1]}`
+			let consentMessageUtter = new SpeechSynthesisUtterance(agreement)
+      consentMessageUtter.rate = .9
+      speechSynthesis.speak(consentMessageUtter)
 
-          const SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList
-          let speechRecognitionList = new SpeechGrammarList()
-          speechRecognitionList.addFromString(grammar, 1)
-          consentMessageRecognition.grammars = speechRecognitionList
-          consentMessageRecognition.lang = selectedLang
+			consentMessageUtter.onend = function(event) {
+				const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+				const consentMessageRecognition = new SpeechRecognition()
+        const grammar = selectedLang === 'en' ? '#JSGF V1.0  grammar answers  public <answer> = yes | no  ' : '#JSGF V1.0  grammar answers  public <answer> = oui | non  '
 
-  				consentMessageRecognition.start()
-          setAlertMessage('Listening...')
-          setAction('listening')
+        const SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList
+        let speechRecognitionList = new SpeechGrammarList()
+        speechRecognitionList.addFromString(grammar, 1)
+        consentMessageRecognition.grammars = speechRecognitionList
+        consentMessageRecognition.lang = selectedLang
 
-          let result = null
-  				consentMessageRecognition.onresult = function(event) {
-            setAlertMessage('Analizing...')
-            const confidence = event.results[0][0].confidence
-            transcriptMess = event.results[0][0].transcript
+				consentMessageRecognition.start()
+        setAlertMessage('Listening...')
+        setAction('listening')
 
-            if(confidence >= .7){
-              result = true
-              setSpeechResult(!['non', 'no'].includes(transcriptMess))
-            } else { setAlertMessage('Please try again.') }
+        let result = null
+				consentMessageRecognition.onresult = function(event) {
+          setAlertMessage('Analizing...')
+          const confidence = event.results[0][0].confidence
+          transcriptMess = event.results[0][0].transcript
 
-            setAction('')
-  				}
+          if(confidence >= .7){
+            result = true
+            setSpeechResult(!['non', 'no'].includes(transcriptMess))
+          } else { setAlertMessage('Please try again.') }
 
-          consentMessageRecognition.onspeechend = function() {
-            consentMessageRecognition.stop()
+          setAction('')
+				}
+
+        consentMessageRecognition.onspeechend = function() {
+          consentMessageRecognition.stop()
+        }
+
+        consentMessageRecognition.onend = function(event) {
+          setAlertMessage('')
+          if(!result) {
+            setAlertMessage('Please try again.')
+            setAction('retry')
+          } else {
+            setConsent({ name: username, consent: speechResult, lang: selectedLang,  message: transcriptMess})
           }
-
-          consentMessageRecognition.onend = function(event) {
-            setAlertMessage('')
-            if(!result) {
-              setAlertMessage('Please try again.')
-              setAction('retry')
-            } else {
-              setConsent({ name: username, consent: speechResult, lang: selectedLang,  message: transcriptMess})
-            }
-  				}
-  			}
-  		}, 1000)
+				}
+			}
     }
   }
 
