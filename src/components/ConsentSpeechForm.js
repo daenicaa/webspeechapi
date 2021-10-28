@@ -31,7 +31,7 @@ function SpeechConsentForm({ action, consent, translationResult, handleRetry, ha
   		</div>
       <div>
         {consent ? (
-          <div className="">
+          <div>
             <div className={`d-flex respond-container ${speaking}`}>
               <div className="icon-box">
                 <MdPlayArrow className="icon play" onClick={(e) => {handlePlay(e, consent)}}/>

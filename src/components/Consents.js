@@ -1,6 +1,3 @@
-import { useState } from "react";
-import { MdCheck, MdClose, MdPlayArrow, MdOutlinePause } from 'react-icons/md';
-
 import Consent from './Consent'
 
 function Consents() {
@@ -16,7 +13,7 @@ function Consents() {
 						<span>Details</span>
 						<span>Consent Given</span>
 					</h3>
-					<Consent consents="consents"/>
+					<Consent consents={consents}/>
 				</div>
 			) : (<div>No consent listed.</div>)}
 		</div>
