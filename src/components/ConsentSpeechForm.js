@@ -1,10 +1,12 @@
-import { useState } from 'react';
-import { MdMic, MdArrowRightAlt, MdPlayArrow, MdRefresh, MdOutlinePause } from 'react-icons/md';
+import { useState } from 'react'
+import { useHistory } from "react-router-dom"
+import { MdMic, MdArrowRightAlt, MdPlayArrow, MdRefresh, MdOutlinePause } from 'react-icons/md'
 
 function SpeechConsentForm({ action, consent, translationResult, handleRetry, handleSetAction }) {
+  const history = useHistory()
   const [speaking, setSpeaking] = useState('')
 
-  async function handlePlay(event, consent) {
+  function handlePlay(event, consent) {
     setSpeaking('speaking')
 
     const consentMessageUtter = new SpeechSynthesisUtterance(consent.message)
@@ -21,6 +23,7 @@ function SpeechConsentForm({ action, consent, translationResult, handleRetry, ha
     localStorage.removeItem('consents')
     localStorage.setItem('consents', JSON.stringify(consents))
     handleSetAction('sentconsent')
+    history.push('/success')
   }
 
 	return (

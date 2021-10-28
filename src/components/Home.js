@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Switch, Route, useHistory } from "react-router-dom"
 import { MdRefresh } from 'react-icons/md'
 
 import ConsentForm from './ConsentForm'
@@ -6,9 +7,9 @@ import ConsentSpeechForm from './ConsentSpeechForm'
 import ConsentSuccessful from './ConsentSuccessful'
 
 function Home() {
+  const history = useHistory()
   const [selectedLang, setSelectedLang] = useState('')
   const [username, setUsername] = useState('')
-	const [firstPage, setfirstPage] = useState(true)
   const [alertMessage, setAlertMessage] = useState('')
   const [speechResult, setSpeechResult] = useState(true)
   const [consent, setConsent] = useState('')
@@ -46,7 +47,8 @@ function Home() {
   		setTimeout(function(){
   			const consentMessage = trans.find((tran) => tran.lang === selectedLang)
         setTranslationResult(consentMessage.text)
-      	setfirstPage(false)
+
+        history.push('/speech')
 
         const agreement = `${consentMessage.text[0]}${consentMessage.text[1]}`
   			let consentMessageUtter = new SpeechSynthesisUtterance(agreement)
@@ -114,19 +116,17 @@ function Home() {
 	return (
     <div className="card">
       <h2>Consent Form</h2>
-        {action === 'sentconsent' ? (
-          <ConsentSuccessful />
-        ) : (
-          <div>
-    				{firstPage ? (
-    					<ConsentForm username={username} selectedLang={selectedLang} handleUsername={handleUsername} handleSelect={handleSelect} handleSubmit={handleSubmit} />
-    				) : (
-              <ConsentSpeechForm action={action} username={username} selectedLang={selectedLang} consent={consent} translationResult={translationResult} handleRetry={handleRetry} handleSetAction={handleSetAction} />
-            )}
-            {alertMessage && <div id="alert" className="alert">{alertMessage}</div>}
-            {action === 'retry' && <button onClick={handleRetry} className="btn secondary">Retry <MdRefresh /></button>}
-          </div>
-        )}
+      <Switch>
+        <Route path="/">
+          <ConsentForm username={username} selectedLang={selectedLang} handleUsername={handleUsername} handleSelect={handleSelect} handleSubmit={handleSubmit} />
+        </Route>
+        <Route path="/speech">
+          <ConsentSpeechForm action={action} username={username} selectedLang={selectedLang} consent={consent} translationResult={translationResult} handleRetry={handleRetry} handleSetAction={handleSetAction} />
+        </Route>
+        <Route path="/success" component={ConsentSuccessful} />
+      </Switch>
+      {alertMessage && <div id="alert" className="alert">{alertMessage}</div>}
+      {action === 'retry' && <button onClick={handleRetry} className="btn secondary">Retry <MdRefresh /></button>}
     </div>
 	)
 }
