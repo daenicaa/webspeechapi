@@ -1,17 +1,19 @@
-import React, { useState } from 'react';
-import { NavLink } from "react-router-dom";
-import { MdMic, MdArrowRightAlt, MdPlayArrow, MdRefresh, MdOutlineUploadFile, MdOutlinePause } from 'react-icons/md';
+import { useState } from 'react'
+import { MdRefresh } from 'react-icons/md'
+
+import ConsentForm from './ConsentForm'
+import ConsentSpeechForm from './ConsentSpeechForm'
+import ConsentSuccessful from './ConsentSuccessful'
 
 function Home() {
-  const [selectedLang, setSelectedLang] = useState('');
-  const [userName, setUserName] = useState('');
-	const [firstPage, setfirstPage] = useState(true);
-  const [alertMessage, setAlertMessage] = useState('');
-  const [speechResult, setSpeechResult] = useState(true);
-  //const [transcriptMessage, setTranscriptMessage] = useState('');
-  const [consent, setConsent] = useState(null);
-  const [translationResult, setTranslationResult] = useState(null);
-  const [action, setAction] = useState('');
+  const [selectedLang, setSelectedLang] = useState('')
+  const [username, setUsername] = useState('')
+	const [firstPage, setfirstPage] = useState(true)
+  const [alertMessage, setAlertMessage] = useState('')
+  const [speechResult, setSpeechResult] = useState(true)
+  const [consent, setConsent] = useState('')
+  const [translationResult, setTranslationResult] = useState(null)
+  const [action, setAction] = useState('')
   let transcriptMess = ''
 
   const trans = [
@@ -27,191 +29,106 @@ function Home() {
     }
   ]
 
-	function handleNext(event) {
-    if(userName === '' || selectedLang === '') {
+  function handleUsername(event) {
+    setUsername(event.target.value)
+  }
+
+  function handleSelect(event) {
+    setSelectedLang(event.target.value)
+  }
+
+	function handleSubmit(event) {
+    event.preventDefault()
+    if(username === '' || selectedLang === '') {
       setAlertMessage('Please input required fields.')
     } else {
+      setAlertMessage('')
   		setTimeout(function(){
   			const consentMessage = trans.find((tran) => tran.lang === selectedLang)
         setTranslationResult(consentMessage.text)
+      	setfirstPage(false)
 
-      	setfirstPage(false);
         const agreement = `${consentMessage.text[0]}${consentMessage.text[1]}`
-  			let consentMessageUtter = new SpeechSynthesisUtterance(agreement);
+  			let consentMessageUtter = new SpeechSynthesisUtterance(agreement)
         consentMessageUtter.rate = .9
-        setTimeout(function(){
-  			  speechSynthesis.speak(consentMessageUtter);
-        }, 1000);
+        speechSynthesis.speak(consentMessageUtter)
 
   			consentMessageUtter.onend = function(event) {
-  				let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
-  				let consentMessageRecognition = new SpeechRecognition();
+  				const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+  				const consentMessageRecognition = new SpeechRecognition()
+          const grammar = selectedLang === 'en' ? '#JSGF V1.0  grammar answers  public <answer> = yes | no  ' : '#JSGF V1.0  grammar answers  public <answer> = oui | non  '
 
-          var grammar = selectedLang === 'en' ? '#JSGF V1.0; grammar answers; public <answer> = yes | no ;' : '#JSGF V1.0; grammar answers; public <answer> = oui | non ;'
-
-          let SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList
-          let speechRecognitionList = new SpeechGrammarList();
-          speechRecognitionList.addFromString(grammar, 1);
-          consentMessageRecognition.grammars = speechRecognitionList;
+          const SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList
+          let speechRecognitionList = new SpeechGrammarList()
+          speechRecognitionList.addFromString(grammar, 1)
+          consentMessageRecognition.grammars = speechRecognitionList
           consentMessageRecognition.lang = selectedLang
 
-  				consentMessageRecognition.start();
+  				consentMessageRecognition.start()
           setAlertMessage('Listening...')
           setAction('listening')
 
           let result = null
-
   				consentMessageRecognition.onresult = function(event) {
             setAlertMessage('Analizing...')
-            let confidence = event.results[0][0].confidence;
+            const confidence = event.results[0][0].confidence
+            transcriptMess = event.results[0][0].transcript
 
             if(confidence >= .7){
-              //for onend
               result = true
+              setSpeechResult(!['non', 'no'].includes(transcriptMess))
+            } else { setAlertMessage('Please try again.') }
 
-              transcriptMess = event.results[0][0].transcript
-
-              if(['non', 'no'].includes(event.results[0][0].transcript)){
-                setSpeechResult(false);
-              }else {
-                setSpeechResult(true);
-              }
-            }else {
-              setAlertMessage('Please try again.')
-            }
             setAction('')
   				}
 
           consentMessageRecognition.onspeechend = function() {
-            consentMessageRecognition.stop();
+            consentMessageRecognition.stop()
           }
 
           consentMessageRecognition.onend = function(event) {
             setAlertMessage('')
-            setTimeout(function(){
-              if(!result) {
-                setAlertMessage('Please try again.')
-                setAction('retry')
-              } else {
-                setConsent({ name: userName, consent: speechResult, lang: selectedLang,  message: transcriptMess})
-              }
-            }, 1000);
+            if(!result) {
+              setAlertMessage('Please try again.')
+              setAction('retry')
+            } else {
+              setConsent({ name: username, consent: speechResult, lang: selectedLang,  message: transcriptMess})
+            }
   				}
   			}
-  		}, 1000);
+  		}, 1000)
     }
   }
 
-  function handleUserName(event) {
-    setUserName(event.target.value)
-  }
-  function handlePlay(event, consent) {
-    //pause icon
-    if(event.target.closest('.respond-container')){
-      event.target.closest('.respond-container').classList.add('speaking')
-    }
-
-    let consentMessageUtter = new SpeechSynthesisUtterance(consent.message);
-    speechSynthesis.speak(consentMessageUtter);
-    //play icon
-    setTimeout(() => {
-      if(event.target.closest('.respond-container')){
-        event.target.closest('.respond-container').classList.remove('speaking')
-      }
-    }, 1000)
-  }
-  function handleSaveConsent(event) {
-    let consents = localStorage.getItem('consents') ? JSON.parse(localStorage.getItem('consents')) : []
-    consents.push(consent)
-    localStorage.removeItem('consents')
-    localStorage.setItem('consents', JSON.stringify(consents))
-    setAction('sentconsent');
-  }
-  function handleSelect(event) {
-    setSelectedLang(event.target.value)
-  }
-  function handleRetry() {
+  function handleRetry(event) {
     setAction('')
     setConsent(null)
     setAlertMessage('')
-    handleNext()
+    handleSubmit(event)
+  }
+
+  function handleSetAction(action) {
+    setAction(action)
   }
 
 	return (
     <div className="card">
       <h2>Consent Form</h2>
-        { action === 'sentconsent' ? (
-          <div className="consent-sent--container">
-            <div className="icon-box">
-              <MdOutlineUploadFile className="icon"/>
-            </div>
-            <p>Thank you, your consent has been successfully saved!</p>
-            <NavLink to="/consents">View All consents</NavLink>
-          </div>
+        {action === 'sentconsent' ? (
+          <ConsentSuccessful />
         ) : (
           <div>
     				{firstPage ? (
-    					<div className="form-container">
-    	          <div className="form-group">
-    	            <label>Name</label>
-    	            <input type="text"
-                    value={userName}
-                    onChange={handleUserName}
-    	              placeholder="Enter your name"
-    	              className="form-control"/>
-    	          </div>
-    	          <div className="form-group">
-    	            <label>Language</label>
-    							<select value={selectedLang} onChange={handleSelect} className="form-control">
-                    <option value="">Select language</option>
-    		            <option value="en">English</option>
-    		            <option value="fr">French</option>
-    		          </select>
-    	          </div>
-    	          <button onClick={handleNext} className="btn secondary ml-auto d-block">Next <MdArrowRightAlt /></button>
-    					</div>
+    					<ConsentForm username={username} selectedLang={selectedLang} handleUsername={handleUsername} handleSelect={handleSelect} handleSubmit={handleSubmit} />
     				) : (
-    					<div className="form-container">
-                { translationResult ? (
-    		          <div>
-                    <p>{ translationResult[0] }</p>
-                    <p>{ translationResult[1] }</p>
-    							</div>
-                ) : (null)}
-
-                { consent ? (
-                  <div className="">
-                    <div className="d-flex respond-container">
-                      <div className="icon-box">
-                        <MdPlayArrow className="icon play" onClick={(e) => { handlePlay(e, consent) }}/>
-												<MdOutlinePause className="icon speaking" onClick={(e) => { handlePlay(e, consent) }}/>
-                      </div>
-                      <label>You responded { consent.consent ? (<span>"Yes"</span>) : ( <span>"No"</span> )}</label>
-                    </div>
-                    <div className="btn-group d-flex">
-                      <button onClick={handleRetry} className="btn secondary">Retry <MdRefresh /></button>
-                      <button onClick={handleSaveConsent} className="btn secondary">Save <MdArrowRightAlt /></button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex-center">
-                    <div className={`icon-box ${action}`}>
-                      <MdMic className="icon" />
-                    </div>
-                  </div>
-                )}
-    		      </div>
+              <ConsentSpeechForm action={action} username={username} selectedLang={selectedLang} consent={consent} translationResult={translationResult} handleRetry={handleRetry} handleSetAction={handleSetAction} />
             )}
-            {alertMessage ? (
-              <div id="alert" className="alert">{ alertMessage }</div>
-            ) : ( null )}
-            {action === 'retry' ? (
-              <button onClick={handleRetry} className="btn secondary">Retry <MdRefresh /></button>
-            ) : ( null )}
+            {alertMessage ? (<div id="alert" className="alert">{alertMessage}</div>) : (null)}
+            {action === 'retry' ? (<button onClick={handleRetry} className="btn secondary">Retry <MdRefresh /></button>) : (null)}
           </div>
         )}
     </div>
-	);
+	)
 }
 
-export default Home;
+export default Home

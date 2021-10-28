@@ -1,4 +1,3 @@
-import React from "react";
 import { NavLink } from "react-router-dom";
 
 function Header(){
@@ -12,7 +11,8 @@ function Header(){
 	    <div className="container menu">
 			{menus.map((menu, index) => (
 				<NavLink
-					exact={true} activeClassName='active'
+					exact={true}
+					activeClassName='active'
 	        to={ menu.path }
 	        key={`header-menu-${index}`}>
 	        { menu.text }
@@ -20,7 +20,7 @@ function Header(){
 			))}
 	    </div>
 	  </header>
-	);
+	)
 }
 
 export default Header;
