@@ -1,13 +1,11 @@
-import { useState } from 'react'
-import { Switch, Route, useHistory } from "react-router-dom"
-import { MdRefresh } from 'react-icons/md'
+import { useState } from 'react';
+import { MdRefresh } from 'react-icons/md';
 
 import ConsentForm from './ConsentForm'
 import ConsentSpeechForm from './ConsentSpeechForm'
 import ConsentSuccessful from './ConsentSuccessful'
 
 function Home() {
-  const history = useHistory()
   const [selectedLang, setSelectedLang] = useState('')
   const [username, setUsername] = useState('')
   const [alertMessage, setAlertMessage] = useState('')
@@ -15,6 +13,7 @@ function Home() {
   const [consent, setConsent] = useState('')
   const [translationResult, setTranslationResult] = useState(null)
   const [action, setAction] = useState('')
+  const [tab, setTab] = useState('open')
   let transcriptMess = ''
 
   const trans = [
@@ -48,7 +47,7 @@ function Home() {
   			const consentMessage = trans.find((tran) => tran.lang === selectedLang)
         setTranslationResult(consentMessage.text)
 
-        history.push('/speech')
+        setTab('speech')
 
         const agreement = `${consentMessage.text[0]}${consentMessage.text[1]}`
   			let consentMessageUtter = new SpeechSynthesisUtterance(agreement)
@@ -113,22 +112,27 @@ function Home() {
     setAction(action)
   }
 
+  let formComponent = null
+  switch (tab) {
+    case 'speech':
+      formComponent = <ConsentSpeechForm action={action} username={username} selectedLang={selectedLang} setTab={setTab} consent={consent} translationResult={translationResult} handleRetry={handleRetry} handleSetAction={handleSetAction} />
+      break;
+    case 'success':
+      formComponent = <ConsentSuccessful />
+      break;
+    default:
+      formComponent = <ConsentForm username={username} selectedLang={selectedLang} handleUsername={handleUsername} handleSelect={handleSelect} handleSubmit={handleSubmit} />
+      break;
+  }
+
 	return (
     <div className="card">
       <h2>Consent Form</h2>
-      <Switch>
-        <Route path="/">
-          <ConsentForm username={username} selectedLang={selectedLang} handleUsername={handleUsername} handleSelect={handleSelect} handleSubmit={handleSubmit} />
-        </Route>
-        <Route path="/speech">
-          <ConsentSpeechForm action={action} username={username} selectedLang={selectedLang} consent={consent} translationResult={translationResult} handleRetry={handleRetry} handleSetAction={handleSetAction} />
-        </Route>
-        <Route path="/success" component={ConsentSuccessful} />
-      </Switch>
+      {formComponent}
       {alertMessage && <div id="alert" className="alert">{alertMessage}</div>}
       {action === 'retry' && <button onClick={handleRetry} className="btn secondary">Retry <MdRefresh /></button>}
     </div>
 	)
 }
 
-export default Home
+export default Home;

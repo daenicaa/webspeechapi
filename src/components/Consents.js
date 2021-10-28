@@ -1,4 +1,4 @@
-import Consent from './Consent'
+import Consent from './Consent';
 
 function Consents() {
 	const cons = localStorage.getItem('consents')
