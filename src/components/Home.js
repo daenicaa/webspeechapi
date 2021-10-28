@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { MdRefresh } from 'react-icons/md';
 
-import ConsentForm from './ConsentForm'
-import ConsentSpeechForm from './ConsentSpeechForm'
-import ConsentSuccessful from './ConsentSuccessful'
+import ConsentForm from './ConsentForm';
+import ConsentSpeechForm from './ConsentSpeechForm';
+import ConsentSuccessful from './ConsentSuccessful';
 
 function Home() {
   const [selectedLang, setSelectedLang] = useState('')
