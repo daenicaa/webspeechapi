@@ -111,22 +111,18 @@ function Home() {
     setAction(action)
   }
 
+  const consentSuccessful = action === 'sentconsent' ? <ConsentSuccessful /> : null
+  const consentForm = firstPage ? <ConsentForm username={username} selectedLang={selectedLang} handleUsername={handleUsername} handleSelect={handleSelect} handleSubmit={handleSubmit} /> : <ConsentSpeechForm action={action} username={username} selectedLang={selectedLang} consent={consent} translationResult={translationResult} handleRetry={handleRetry} handleSetAction={handleSetAction} />
+  const alert = alertMessage ? <div id="alert" className="alert">{alertMessage}</div> : null
+  const retryButton = action === 'retry' ? <button onClick={handleRetry} className="btn secondary">Retry <MdRefresh /></button> : null
+
 	return (
     <div className="card">
       <h2>Consent Form</h2>
-        {action === 'sentconsent' ? (
-          <ConsentSuccessful />
-        ) : (
-          <div>
-    				{firstPage ? (
-    					<ConsentForm username={username} selectedLang={selectedLang} handleUsername={handleUsername} handleSelect={handleSelect} handleSubmit={handleSubmit} />
-    				) : (
-              <ConsentSpeechForm action={action} username={username} selectedLang={selectedLang} consent={consent} translationResult={translationResult} handleRetry={handleRetry} handleSetAction={handleSetAction} />
-            )}
-            {alertMessage ? (<div id="alert" className="alert">{alertMessage}</div>) : (null)}
-            {action === 'retry' ? (<button onClick={handleRetry} className="btn secondary">Retry <MdRefresh /></button>) : (null)}
-          </div>
-        )}
+      {consentSuccessful}
+      {consentForm}
+      {alert}
+      {retryButton}
     </div>
 	)
 }
