@@ -27,7 +27,7 @@ function ConsentForm({ username, selectedLang, handleUsername, handleSelect, han
             <option label="French" value="fr">French</option>
           </select>
         </div>
-        <button className="btn secondary ml-auto d-block">Next <MdArrowRightAlt /></button>
+        <button type="submit" className="btn secondary ml-auto d-block">Next <MdArrowRightAlt /></button>
 			</form>
     </div>
 	)

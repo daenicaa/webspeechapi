@@ -25,7 +25,7 @@ function SpeechConsentForm({ action, consent, translationResult, setTab, handleR
   }
 
 	return (
-    <div className="form-container">
+    <form className="form-container" onSubmit={handleSaveConsent}>
       <div>
         <p>{translationResult[0]}</p>
         <p>{translationResult[1]}</p>
@@ -41,8 +41,8 @@ function SpeechConsentForm({ action, consent, translationResult, setTab, handleR
               <label>You responded {consent.consent ? (<span>"Yes"</span>) : (<span>"No"</span>)}</label>
             </div>
             <div className="btn-group d-flex">
-              <button onClick={(e) => handleRetry(e)} className="btn secondary">Retry <MdRefresh /></button>
-              <button onClick={handleSaveConsent} className="btn secondary">Save <MdArrowRightAlt /></button>
+              <button type="button" onClick={handleRetry} className="btn secondary">Retry <MdRefresh /></button>
+              <button type="submit" className="btn secondary">Save <MdArrowRightAlt /></button>
             </div>
           </div>
         ) : (
@@ -53,7 +53,7 @@ function SpeechConsentForm({ action, consent, translationResult, setTab, handleR
           </div>
         )}
       </div>
-    </div>
+    </form>
 	)
 }
 
